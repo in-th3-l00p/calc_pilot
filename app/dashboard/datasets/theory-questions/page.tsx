@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery } from "convex/react"
 
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
 import { api } from "@/convex/_generated/api"
+import { QuestionCard } from "./components/QuestionCard"
+import { NewQuestionCard } from "./components/NewQuestionCard"
 
 type Draft = {
   question: string
@@ -63,156 +63,81 @@ export default function TheoryQuestionsEditorPage() {
               const draft = drafts[id] ?? { question: q.question, answer: q.answer }
 
               return (
-                <section
+                <QuestionCard
                   key={id}
-                  className="rounded-xl border bg-card text-card-foreground p-4 sm:p-6 space-y-4"
-                >
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                      Question
-                    </p>
-                    <Textarea
-                      value={draft.question}
-                      onChange={(e) =>
-                        setDrafts((prev) => ({
-                          ...prev,
-                          [id]: {
-                            ...draft,
-                            question: e.target.value,
-                          },
-                        }))
-                      }
-                      className="min-h-[80px]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                      Reference answer
-                    </p>
-                    <Textarea
-                      value={draft.answer}
-                      onChange={(e) =>
-                        setDrafts((prev) => ({
-                          ...prev,
-                          [id]: {
-                            ...draft,
-                            answer: e.target.value,
-                          },
-                        }))
-                      }
-                      className="min-h-[80px]"
-                    />
-                  </div>
-                  <div className="flex flex-wrap justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      type="button"
-                      onClick={async () => {
-                        await deleteQuestion({ id: q._id })
-                      }}
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      type="button"
-                      onClick={() =>
-                        setDrafts((prev) => ({
-                          ...prev,
-                          [id]: {
-                            question: q.question,
-                            answer: q.answer,
-                          },
-                        }))
-                      }
-                    >
-                      Reset
-                    </Button>
-                    <Button
-                      size="sm"
-                      type="button"
-                      onClick={async () => {
-                        await updateQuestion({
-                          id: q._id,
-                          question: draft.question,
-                          answer: draft.answer,
-                        })
-                      }}
-                    >
-                      Save changes
-                    </Button>
-                  </div>
-                </section>
+                  draft={draft}
+                  onChangeQuestion={(value) =>
+                    setDrafts((prev) => ({
+                      ...prev,
+                      [id]: {
+                        ...draft,
+                        question: value,
+                      },
+                    }))
+                  }
+                  onChangeAnswer={(value) =>
+                    setDrafts((prev) => ({
+                      ...prev,
+                      [id]: {
+                        ...draft,
+                        answer: value,
+                      },
+                    }))
+                  }
+                  onDelete={async () => {
+                    await deleteQuestion({ id: q._id })
+                  }}
+                  onReset={() =>
+                    setDrafts((prev) => ({
+                      ...prev,
+                      [id]: {
+                        question: q.question,
+                        answer: q.answer,
+                      },
+                    }))
+                  }
+                  onSave={async () => {
+                    await updateQuestion({
+                      id: q._id,
+                      question: draft.question,
+                      answer: draft.answer,
+                    })
+                  }}
+                />
               )
             })}
           </div>
         )}
-        <section className="rounded-xl border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  New question
-                </p>
-                <Textarea
-                  value={newDraft.question}
-                  onChange={(e) =>
-                    setNewDraft((prev) => ({
-                      ...prev,
-                      question: e.target.value,
-                    }))
-                  }
-                  placeholder="Type a new theory question here..."
-                  className="min-h-[80px]"
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Reference answer
-                </p>
-                <Textarea
-                  value={newDraft.answer}
-                  onChange={(e) =>
-                    setNewDraft((prev) => ({
-                      ...prev,
-                      answer: e.target.value,
-                    }))
-                  }
-                  placeholder="Optional: add a reference answer or outline."
-                  className="min-h-[80px]"
-                />
-              </div>
-              <div className="flex flex-wrap justify-end gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  type="button"
-                  onClick={() =>
-                    setNewDraft({ question: "", answer: "" })
-                  }
-                >
-                  Clear
-                </Button>
-                <Button
-                  size="sm"
-                  type="button"
-                  onClick={async () => {
-                    if (!newDraft.question.trim() && !newDraft.answer.trim()) return
-                    await createQuestion({
-                      question: newDraft.question,
-                      answer: newDraft.answer,
-                    })
-                    setNewDraft({ question: "", answer: "" })
-                  }}
-                >
-                  Save new question
-                </Button>
-              </div>
-            </section>
+
+        <NewQuestionCard
+          draft={newDraft}
+          onChangeQuestion={(value) =>
+            setNewDraft((prev) => ({
+              ...prev,
+              question: value,
+            }))
+          }
+          onChangeAnswer={(value) =>
+            setNewDraft((prev) => ({
+              ...prev,
+              answer: value,
+            }))
+          }
+          onClear={() => setNewDraft({ question: "", answer: "" })}
+          onSave={async () => {
+            if (!newDraft.question.trim() && !newDraft.answer.trim()) return
+            await createQuestion({
+              question: newDraft.question,
+              answer: newDraft.answer,
+            })
+            setNewDraft({ question: "", answer: "" })
+          }}
+        />
       </div>
     </main>
   )
 }
+
 
 
 
