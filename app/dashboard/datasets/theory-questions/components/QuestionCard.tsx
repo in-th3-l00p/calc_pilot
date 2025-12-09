@@ -1,3 +1,5 @@
+import { motion } from "motion/react"
+
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 
@@ -24,7 +26,14 @@ export function QuestionCard({
   onSave,
 }: QuestionCardProps) {
   return (
-    <section className="rounded-xl border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
+    <motion.section
+      layout
+      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -8, scale: 0.98 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="rounded-xl border bg-card text-card-foreground p-4 sm:p-6 space-y-4"
+    >
       <div className="space-y-1">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           Question
@@ -70,7 +79,7 @@ export function QuestionCard({
           Save changes
         </Button>
       </div>
-    </section>
+    </motion.section>
   )
 }
 

@@ -8,7 +8,7 @@
  * @module
  */
 
-import type * as theory from "../theory.js";
+import type * as theory_index from "../theory/index.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +17,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  theory: typeof theory;
+  "theory/index": typeof theory_index;
 }>;
 
 /**

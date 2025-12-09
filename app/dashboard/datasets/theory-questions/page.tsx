@@ -1,9 +1,11 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQuery } from "convex/react"
+import { AnimatePresence } from "motion/react"
 
 import { api } from "@/convex/_generated/api"
+import type { Id } from "@/convex/_generated/dataModel"
 import { QuestionCard } from "./components/QuestionCard"
 import { NewQuestionCard } from "./components/NewQuestionCard"
 
@@ -12,11 +14,18 @@ type Draft = {
   answer: string
 }
 
+type TheoryQuestion = {
+  _id: Id<"theoryQuestions">
+  _creationTime: number
+  question: string
+  answer: string
+}
+
 export default function TheoryQuestionsEditorPage() {
-  const questions = useQuery(api.theory.listTheoryQuestions)
-  const updateQuestion = useMutation(api.theory.updateTheoryQuestion)
-  const createQuestion = useMutation(api.theory.createTheoryQuestion)
-  const deleteQuestion = useMutation(api.theory.deleteTheoryQuestion)
+  const questions = useQuery(api.theory.index.listTheoryQuestions)
+  const updateQuestion = useMutation(api.theory.index.updateTheoryQuestion)
+  const createQuestion = useMutation(api.theory.index.createTheoryQuestion)
+  const deleteQuestion = useMutation(api.theory.index.deleteTheoryQuestion)
 
   const [drafts, setDrafts] = useState<Record<string, Draft>>({})
   const [newDraft, setNewDraft] = useState<Draft>({ question: "", answer: "" })
@@ -35,7 +44,7 @@ export default function TheoryQuestionsEditorPage() {
     })
   }, [questions])
 
-  const hasQuestions = useMemo(() => (questions ?? []).length > 0, [questions])
+  const hasQuestions = (questions ?? []).length > 0
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-10">
@@ -58,54 +67,56 @@ export default function TheoryQuestionsEditorPage() {
 
         {questions && hasQuestions && (
           <div className="space-y-6">
-            {questions.map((q) => {
-              const id = q._id as string
-              const draft = drafts[id] ?? { question: q.question, answer: q.answer }
+            <AnimatePresence>
+              {(questions ?? []).map((q: TheoryQuestion) => {
+                const id = q._id as string
+                const draft = drafts[id] ?? { question: q.question, answer: q.answer }
 
-              return (
-                <QuestionCard
-                  key={id}
-                  draft={draft}
-                  onChangeQuestion={(value) =>
-                    setDrafts((prev) => ({
-                      ...prev,
-                      [id]: {
-                        ...draft,
-                        question: value,
-                      },
-                    }))
-                  }
-                  onChangeAnswer={(value) =>
-                    setDrafts((prev) => ({
-                      ...prev,
-                      [id]: {
-                        ...draft,
-                        answer: value,
-                      },
-                    }))
-                  }
-                  onDelete={async () => {
-                    await deleteQuestion({ id: q._id })
-                  }}
-                  onReset={() =>
-                    setDrafts((prev) => ({
-                      ...prev,
-                      [id]: {
-                        question: q.question,
-                        answer: q.answer,
-                      },
-                    }))
-                  }
-                  onSave={async () => {
-                    await updateQuestion({
-                      id: q._id,
-                      question: draft.question,
-                      answer: draft.answer,
-                    })
-                  }}
-                />
-              )
-            })}
+                return (
+                  <QuestionCard
+                    key={id}
+                    draft={draft}
+                    onChangeQuestion={(value) =>
+                      setDrafts((prev) => ({
+                        ...prev,
+                        [id]: {
+                          ...draft,
+                          question: value,
+                        },
+                      }))
+                    }
+                    onChangeAnswer={(value) =>
+                      setDrafts((prev) => ({
+                        ...prev,
+                        [id]: {
+                          ...draft,
+                          answer: value,
+                        },
+                      }))
+                    }
+                    onDelete={async () => {
+                      await deleteQuestion({ id: q._id })
+                    }}
+                    onReset={() =>
+                      setDrafts((prev) => ({
+                        ...prev,
+                        [id]: {
+                          question: q.question,
+                          answer: q.answer,
+                        },
+                      }))
+                    }
+                    onSave={async () => {
+                      await updateQuestion({
+                        id: q._id,
+                        question: draft.question,
+                        answer: draft.answer,
+                      })
+                    }}
+                  />
+                )
+              })}
+            </AnimatePresence>
           </div>
         )}
 
