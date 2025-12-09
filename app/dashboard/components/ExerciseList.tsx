@@ -1,4 +1,4 @@
-import { Brain, PenSquare } from "lucide-react"
+import { Brain, PenSquare, Database } from "lucide-react"
 
 import { ExerciseCard, type ExerciseCardProps } from "./ExerciseCard"
 
@@ -16,6 +16,13 @@ const exercies: ExerciseCardProps[] = [
     description: "Work through first‑year exam-style problems with guided steps.",
     href: "/exam",
     cta: "Start drills",
+  },
+  {
+    icon: Database,
+    title: "Edit dataset",
+    description: "Review and edit the questions used by the theory agents.",
+    href: "/dashboard/datasets",
+    cta: "Open editor",
   },
 ]
 
