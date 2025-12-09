@@ -24,11 +24,9 @@ export function ExerciseCard({
       <CardHeader className="items-center space-y-2">
         <Icon className="size-6 mx-auto" />
         <CardTitle className="text-sm">{title}</CardTitle>
-        <CardDescription className="text-xs">
-          {description}
-        </CardDescription>
+        <CardDescription className="text-xs">{description}</CardDescription>
       </CardHeader>
-      <CardContent className="pb-4 flex justify-center">
+      <CardContent className="mt-auto pb-4 flex justify-center">
         <Button size="sm" variant="outline" asChild>
           <Link href={href}>
             {cta}
