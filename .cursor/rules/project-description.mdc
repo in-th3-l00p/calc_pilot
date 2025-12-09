@@ -1,0 +1,15 @@
+---
+alwaysApply: true
+---
+
+web application that offers AI Agents that help students to study for the first year calculus exam
+tech stack:
+* nextjs
+* convex -> database & agents
+* ai sdk -> main ai library
+* claude -> llm
+* elevenlabs -> tts
+* clerk -> auth
+
+the features are the following:
+* theory questions: agent that asks the user an explanation for calculus concepts that are fetched from a table on convex
