@@ -9,6 +9,8 @@
  */
 
 import type * as theory_index from "../theory/index.js";
+import type * as theory_mutations from "../theory/mutations.js";
+import type * as theory_queries from "../theory/queries.js";
 
 import type {
   ApiFromModules,
@@ -18,6 +20,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   "theory/index": typeof theory_index;
+  "theory/mutations": typeof theory_mutations;
+  "theory/queries": typeof theory_queries;
 }>;
 
 /**
